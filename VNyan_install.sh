@@ -4,19 +4,13 @@ set -euo pipefail
 
 # ============================================
 # VNyan Linux Installer
-# Portable + Proton GE
+# Portable + Proton (Steam)
 # ============================================
 
 VNYAN_VERSION="1.6.8b"
-PROTON_VERSION="GE-Proton10-34"
 
 # Troque pela sua release
 VNYAN_ZIP_URL="https://pixeldrain.com/api/file/U5vVcdvg?download"
-
-PROTON_URL="https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${PROTON_VERSION}/${PROTON_VERSION}.tar.gz"
-
-PROTON_BASE_DIR="$HOME/.local/share/vnyan-installer/proton"
-PROTON_DIR="${PROTON_BASE_DIR}/${PROTON_VERSION}"
 
 # ============================================
 # Dependências
@@ -34,6 +28,7 @@ require_command curl
 require_command tar
 require_command unzip
 require_command xdg-user-dir
+
 # ============================================
 # Introdução
 # ============================================
@@ -67,47 +62,40 @@ mkdir -p "$PREFIX_DIR"
 mkdir -p "$DOWNLOADS_DIR"
 
 # ============================================
-# Baixar Proton GE
+# Procurar Proton instalado na Steam
 # ============================================
 
-mkdir -p "$PROTON_BASE_DIR"
+echo
+echo "Procurando Proton instalado..."
 
-if [[ ! -d "$PROTON_DIR" ]]; then
+mapfile -t FOUND_PROTONS < <(
+    find ~/.steam ~/.local/share/Steam \
+        -type f -name proton 2>/dev/null
+)
+
+if [[ ${#FOUND_PROTONS[@]} -gt 0 ]]; then
+    PROTON_BIN="${FOUND_PROTONS[0]}"
     echo
-    echo "Baixando Proton GE ${PROTON_VERSION}..."
-    echo "Isso pode demorar muito..."
-    echo
-    PROTON_ARCHIVE="${DOWNLOADS_DIR}/${PROTON_VERSION}.tar.gz"
-
-    if [[ -f "$PROTON_ARCHIVE" ]]; then
-        echo "Arquivo do Proton já existe, pulando download."
-    else
-        curl -L "$PROTON_URL" -o "$PROTON_ARCHIVE"
-    fi
-
-    echo "Extraindo Proton GE..."
-
-    tar -xzf "$PROTON_ARCHIVE" -C "$PROTON_BASE_DIR"
+    echo "Proton encontrado:"
+    echo "$PROTON_BIN"
 else
     echo
-    echo "Proton GE já instalado."
-fi
-
-PROTON_BIN="${PROTON_DIR}/proton"
-
-if [[ ! -f "$PROTON_BIN" ]]; then
-    echo "Erro: Proton não encontrado."
+    echo "Nenhum Proton encontrado."
+    echo "Instale qualquer proton na Steam e tente novamente."
     exit 1
 fi
 
 # ============================================
-# Criar Wine Prefix
+# Criar Wine Prefix (compatdata)
 # ============================================
 
 echo
-echo "Criando Wine prefix..."
+echo "Criando Wine prefix (compatdata)..."
 
-export WINEPREFIX="$PREFIX_DIR"
+export STEAM_COMPAT_DATA_PATH="${PREFIX_DIR}"
+export STEAM_COMPAT_CLIENT_INSTALL_PATH=$(dirname $(dirname "$PROTON_BIN"))
+
+mkdir -p "${PREFIX_DIR}/pfx"
 
 "$PROTON_BIN" run wineboot || true
 
@@ -152,7 +140,8 @@ LAUNCHER_PATH="${INSTALL_DIR}/launcher.sh"
 cat > "$LAUNCHER_PATH" <<EOF
 #!/usr/bin/env bash
 
-export WINEPREFIX="${PREFIX_DIR}"
+export STEAM_COMPAT_DATA_PATH="${PREFIX_DIR}"
+export STEAM_COMPAT_CLIENT_INSTALL_PATH="$(dirname $(dirname "$PROTON_BIN"))"
 
 # AMD Vulkan optimizations
 export RADV_PERFTEST=gpl
