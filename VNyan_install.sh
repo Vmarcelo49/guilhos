@@ -75,7 +75,8 @@ mkdir -p "$PROTON_BASE_DIR"
 if [[ ! -d "$PROTON_DIR" ]]; then
     echo
     echo "Baixando Proton GE ${PROTON_VERSION}..."
-
+    echo "Isso pode demorar muito..."
+    echo
     PROTON_ARCHIVE="${DOWNLOADS_DIR}/${PROTON_VERSION}.tar.gz"
 
     curl -L "$PROTON_URL" -o "$PROTON_ARCHIVE"
@@ -121,6 +122,7 @@ echo
 echo "Extraindo VNyan..."
 
 unzip -o "$VNYAN_ZIP" -d "$APP_DIR"
+unzip -o "$APP_DIR/linux-fixes.zip" -d "$APP_DIR"
 
 # ============================================
 # Detectar executável
