@@ -49,7 +49,7 @@ read -r
 # ============================================
 
 INSTALL_DIR=$(zenity --file-selection --directory \
-    --title="Escolha a pasta de instalação do VNyan")
+    --title="Escolha a pasta de instalação do VNyan" 2>/dev/null)
 
 if [[ -z "${INSTALL_DIR}" ]]; then
     echo "Instalação cancelada."
