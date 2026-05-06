@@ -33,7 +33,7 @@ require_command zenity
 require_command curl
 require_command tar
 require_command unzip
-
+require_command xdg-user-dir
 # ============================================
 # Introdução
 # ============================================
@@ -160,7 +160,14 @@ chmod +x "$LAUNCHER_PATH"
 # Desktop Entry
 # ============================================
 
-DESKTOP_FILE="$HOME/Desktop/VNyan.desktop"
+DESKTOP_DIR=$(xdg-user-dir DESKTOP)
+
+if [[ ! -d "$DESKTOP_DIR" ]]; then
+    echo "Pasta Desktop não encontrada."
+    exit 1
+fi
+
+DESKTOP_FILE="${DESKTOP_DIR}/VNyan.desktop"
 
 cat > "$DESKTOP_FILE" <<EOF
 [Desktop Entry]
