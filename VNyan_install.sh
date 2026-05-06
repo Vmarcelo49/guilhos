@@ -117,9 +117,11 @@ fi
 echo
 echo "Extraindo VNyan..."
 
-unzip -o "$VNYAN_ZIP" -d "$APP_DIR"
-unzip -o "$APP_DIR/linux-fixes.zip" -d "$APP_DIR"
+unzip -oq "$VNYAN_ZIP" -d "$APP_DIR"
+unzip -oq "$APP_DIR/linux-fixes.zip" -d "$APP_DIR"
 
+echo "Fim da extração."
+echo
 # ============================================
 # Detectar executável
 # ============================================
