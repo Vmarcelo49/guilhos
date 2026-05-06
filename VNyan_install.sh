@@ -79,7 +79,11 @@ if [[ ! -d "$PROTON_DIR" ]]; then
     echo
     PROTON_ARCHIVE="${DOWNLOADS_DIR}/${PROTON_VERSION}.tar.gz"
 
-    curl -L "$PROTON_URL" -o "$PROTON_ARCHIVE"
+    if [[ -f "$PROTON_ARCHIVE" ]]; then
+        echo "Arquivo do Proton já existe, pulando download."
+    else
+        curl -L "$PROTON_URL" -o "$PROTON_ARCHIVE"
+    fi
 
     echo "Extraindo Proton GE..."
 
@@ -116,7 +120,11 @@ echo "Baixando VNyan ${VNYAN_VERSION}..."
 
 VNYAN_ZIP="${DOWNLOADS_DIR}/vnyan.zip"
 
-curl -L "$VNYAN_ZIP_URL" -o "$VNYAN_ZIP"
+if [[ -f "$VNYAN_ZIP" ]]; then
+    echo "ZIP do VNyan já existe, pulando download."
+else
+    curl -L "$VNYAN_ZIP_URL" -o "$VNYAN_ZIP"
+fi
 
 echo
 echo "Extraindo VNyan..."
