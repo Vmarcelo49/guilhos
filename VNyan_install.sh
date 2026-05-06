@@ -166,10 +166,12 @@ fi
 
 DESKTOP_FILE="${DESKTOP_DIR}/VNyan.desktop"
 
+DQ='"'
+
 cat > "$DESKTOP_FILE" <<EOF
 [Desktop Entry]
 Name=VNyan
-Exec=\"${LAUNCHER_PATH}\"
+Exec=${DQ}${LAUNCHER_PATH}${DQ}
 Type=Application
 Categories=Game;
 StartupNotify=true
